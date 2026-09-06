@@ -31,7 +31,7 @@ class Server:
     def __init__(self):
         self.__dataset = None
 
-    def dataset(self) -> List[List]:            # داله لقراءة البيانات من سي اس في وارجاعها
+    def dataset(self) -> List[List]:
         """Cached dataset
         """
         if self.__dataset is None:
@@ -63,4 +63,3 @@ class Server:
             return []
 
         return dataset[start_index:end_index]
-    
