@@ -1,42 +1,28 @@
 import fs from 'fs';
 
-const readDatabase = (filePath) => new Promise((resolve, reject) => {
-  if (!filePath) {
-    reject(new Error('Cannot load the database'));
-    return;
-  }
-
-  fs.readFile(filePath, 'utf-8', (err, data) => {
-    if (err) {
-      reject(new Error('Cannot load the database'));
-      return;
-    }
-
-    const lines = data.trim().split('\n').filter((line) => line.trim().length > 0);
-
-    if (lines.length <= 1) {
-      resolve({});
-      return;
-    }
-
-    const students = lines.slice(1);
-    const fields = {};
-
-    students.forEach((student) => {
-      const parts = student.split(',');
-      if (parts.length >= 4) {
-        const firstname = parts[0].trim();
-        const field = parts[3].trim();
-
-        if (!fields[field]) {
-          fields[field] = [];
-        }
-        fields[field].push(firstname);
+function readDatabase(path) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(path, (err, data) => {
+      if (err) {
+        reject(new Error('Cannot load the database'));
+        return;
       }
+      const lines = data
+        .toString('utf-8')
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0);
+      const students = {};
+      for (let i = 1; i < lines.length; i += 1) {
+        const [firstname, , , field] = lines[i].split(',');
+        if (!students[field]) {
+          students[field] = [];
+        }
+        students[field].push(firstname);
+      }
+      resolve(students);
     });
-
-    resolve(fields);
   });
-});
+}
 
 export default readDatabase;
